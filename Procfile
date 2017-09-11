@@ -1,0 +1,1 @@
+web: java -Dserver.port=$PORT -cp target/classes:target/dependency/* org.shubham.wingify.store.heroku.Main

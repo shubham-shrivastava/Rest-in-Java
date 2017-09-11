@@ -1,0 +1,182 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.shubham.wingify</groupId>
+	<artifactId>store</artifactId>
+	<packaging>war</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>store</name>
+
+	<pluginRepositories>
+
+
+		<pluginRepository>
+			<id>miredot</id>
+			<name>MireDot Releases</name>
+			<url>http://nexus.qmino.com/content/repositories/miredot</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>miredot snapshots</id>
+			<name>MireDot Snapshots</name>
+			<url>http://nexus.qmino.com/content/repositories/miredot-snapshots</url>
+		</pluginRepository>
+
+	</pluginRepositories>
+
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.glassfish.jersey</groupId>
+				<artifactId>jersey-bom</artifactId>
+				<version>${jersey.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.glassfish.jersey.containers</groupId>
+			<artifactId>jersey-container-servlet</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-moxy</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-servlet</artifactId>
+			<version>${jetty.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-webapp</artifactId>
+			<version>${jetty.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.glassfish.jersey.test-framework.providers</groupId>
+			<artifactId>jersey-test-framework-provider-bundle</artifactId>
+			<type>pom</type>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<finalName>store</finalName>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.5.1</version>
+				<inherited>true</inherited>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>${jetty.version}</version>
+				<configuration>
+					<contextPath>/</contextPath>
+					<webApp>
+						<contextPath>/</contextPath>
+						<webInfIncludeJarPattern>.*/.*jersey-[^/]\.jar$</webInfIncludeJarPattern>
+					</webApp>
+					<war>${project.build.directory}/${project.build.finalName}.war</war>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.qmino</groupId>
+				<artifactId>miredot-plugin</artifactId>
+				<version>2.0.3</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>restdoc</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<organizationId>ca885e63-450e-473b-ba60-0a6380b604ee</organizationId>
+					<restModel>
+						<httpStatusCodes>
+							<httpStatusCode>
+								<httpCode>200</httpCode>
+								<document>always</document>
+								<defaultMessage>The service call has completed successfully.</defaultMessage>
+							</httpStatusCode>
+							<httpStatusCode>
+								<httpCode>404</httpCode>
+								<document>explicit:
+									org.shubham.wingify.store.exception.DataNotFoundException</document>
+								<defaultMessage>Data isn't found in the db</defaultMessage>
+							</httpStatusCode>
+							<httpStatusCode>
+								<httpCode>412</httpCode>
+								<document>put,post</document>
+								<defaultMessage>Invalid JSON/XML input.</defaultMessage>
+							</httpStatusCode>
+							<httpStatusCode>
+								<httpCode>500</httpCode>
+								<document>always</document>
+								<defaultMessage>The service call has not succeeded.</defaultMessage>
+								<sticky>true</sticky> <!-- Document always, even if there is an @statuscode tag -->
+							</httpStatusCode>
+						</httpStatusCodes>
+						<restFramework>
+							<name>jax-rs</name>
+						</restFramework>
+					</restModel>
+					<output>
+						<html>
+							<baseUrl>https://wingifystore.herokuapp.com/wingify/</baseUrl>
+						</html>
+						<title>Wingify Online Store </title>
+					</output>
+					<!-- insert other configuration here (optional) -->
+
+
+
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<properties>
+		<jersey.version>2.26-b03</jersey.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<jetty.version>9.0.6.v20130930</jetty.version>
+	</properties>
+
+
+
+
+</project>
